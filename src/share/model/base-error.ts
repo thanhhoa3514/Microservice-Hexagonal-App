@@ -1,0 +1,1 @@
+export const BaseError = new Error("Data not found");
