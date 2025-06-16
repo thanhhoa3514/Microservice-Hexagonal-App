@@ -1,19 +1,23 @@
 import { Router } from "express";
-import { createCategoryAPI } from "./infras/create-api";
-import { getCategoryAPI } from "./infras/get-apit";
-import { listCategoryAPI } from "./infras/list-api";
-import { updateCategoryAPI } from "./infras/update-api";
-import { deleteCategoryAPI } from "./infras/delete-api";
+
 import { Sequelize } from "sequelize";
-import { init } from "./infras/repository/category-repo";
+import { init, modelName } from "./infras/repository/category-repo";
+import { CategoryRepository } from "./infras/repository/repo";
+import { CategoryUseCase } from "./usecase";
+import { CategoryHttpService } from "./infras/transport/http-service";
 const router = Router();
 
-export const setUpCategoryAPIModule = async (sequelize: Sequelize) => {
+export const setUpCategoryAPIHex = async (sequelize: Sequelize) => {
     init(sequelize);
-    router.post("/categories", createCategoryAPI);
-    router.get("/categories", listCategoryAPI);
-    router.get("/categories/:id", getCategoryAPI);
-    router.patch("/categories/:id", updateCategoryAPI);
-    router.delete("/categories/:id", deleteCategoryAPI);
+    const categoryRepository = new CategoryRepository(sequelize, modelName);
+    const categoryUseCase = new CategoryUseCase(categoryRepository);
+    const categoryHttpService = new CategoryHttpService(categoryUseCase);
+
+    router.post("/categories", categoryHttpService.createNewCategoryAPI.bind(categoryHttpService));
+    router.get("/categories", categoryHttpService.listCategoryAPI.bind(categoryHttpService));
+    router.get("/categories/:id", categoryHttpService.getDetailCategoryAPI.bind(categoryHttpService));
+    router.patch("/categories/:id", categoryHttpService.updateCategoryAPI.bind(categoryHttpService));
+    router.delete("/categories/:id", categoryHttpService.deleteCategoryAPI.bind(categoryHttpService));
+
     return router;
 }
