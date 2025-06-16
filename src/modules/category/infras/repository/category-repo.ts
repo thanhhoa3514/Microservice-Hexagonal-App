@@ -30,11 +30,11 @@ export function init(sequelize: Sequelize) {
                 allowNull: true,
             },
             status: {
-                type: DataTypes.ENUM("active", "inactive"),
+                type: DataTypes.ENUM("active", "inactive", "deleted"),
                 allowNull: false,
                 defaultValue: "active",
                 validate: {
-                    isIn: [["active", "inactive"]],
+                    isIn: [["active", "inactive", "deleted"]],
                 },
             },
 
