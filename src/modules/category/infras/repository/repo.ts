@@ -18,7 +18,7 @@ export class CategoryRepository implements IRepository {
         if (!category) {
             throw BaseError;
         }
-        console.log(category);
+        // console.log(category);
 
         // Transform parentId to parent_id
         const transformedData = {

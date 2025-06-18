@@ -14,4 +14,4 @@ export const CategorySchema = z.object({
     updated_at: z.date().optional()
 });
 
-export type Category = z.infer<typeof CategorySchema>;
+export type Category = z.infer<typeof CategorySchema> & { children?: Category[] };
