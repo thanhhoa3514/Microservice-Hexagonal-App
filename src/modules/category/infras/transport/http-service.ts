@@ -4,6 +4,7 @@ import { CategoryCreateDTO, CategoryCreateDTOSchema, CategoryUpdateDTO, Category
 import { ICategoryUseCase } from "../../interface";
 import { PaginationSchema } from "../../../../share/model/paging";
 import { CategoryStatus } from "../../model/category-enum";
+import { Category } from "../../model/category-model";
 
 export class CategoryHttpService {
     constructor(private readonly useCase: ICategoryUseCase) {
@@ -36,10 +37,11 @@ export class CategoryHttpService {
             return;
         }
         const { categories, pagination } = await this.useCase.listCategory(data, req.query);
+        const categoryTree = this.buildCategoryTree(categories);
         res.status(200).json({
             message: "Categories listed successfully",
             data: {
-                categories,
+                categories: categoryTree,
                 pagination
             }
         });
@@ -92,5 +94,26 @@ export class CategoryHttpService {
                 error: error
             });
         }
+    }
+    private buildCategoryTree(categories: Category[]): Category[] {
+        if (!categories || categories.length === 0) {
+            return [];
+        }
+        const roots: Category[] = [];
+        const categoryMap = new Map<string, Category[]>();
+        for (let i = 0; i < categories.length; i++) {
+            const category = categories[i];
+            if (!categoryMap.get(category.id)) {
+                categoryMap.set(category.id, []);
+            }
+            category.children = categoryMap.get(category.id);
+            if (!category.parent_id) {
+                roots.push(category);
+            } else {
+                const parent = categoryMap.get(category.parent_id);
+                parent ? parent.push(category) : categoryMap.set(category.parent_id, [category]);
+            }
+        }
+        return roots;
     }
 }
