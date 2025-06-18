@@ -1,11 +1,10 @@
 import { BrandStatus } from "./brand-enum";
-
 import { z } from "zod";
-import { BrandNameTooShortError } from "./brand-error";
 
+export const modelName = "brands";
 export const BrandSchema = z.object({
     id: z.string().uuid(),
-    name: z.string().min(2, new BrandNameTooShortError()),
+    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
     image: z.string().url().optional().nullable(),
     description: z.string().optional().nullable(),
     tagLine: z.string().optional().nullable(),
