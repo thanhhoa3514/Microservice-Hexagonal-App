@@ -1,5 +1,5 @@
 export enum BrandStatus {
-    ACTIVE = "ACTIVE",
-    INACTIVE = "INACTIVE",
-    DELETED = "DELETED"
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+    DELETED = 'deleted'
 }
