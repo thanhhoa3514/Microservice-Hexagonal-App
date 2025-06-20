@@ -67,4 +67,11 @@ export class BrandRepositorySequelize extends BaseRepositorySequelize<Brand, Bra
     async insert(data: Brand): Promise<void> {
         await BrandPersistence.create(data);
     }
+    async findByCondition(condition: BrandConditionDTO): Promise<Brand | null> {
+        const brand = await BrandPersistence.findOne({ where: { name: condition.name } });
+        if (!brand) {
+            return null;
+        }
+        return BrandSchema.parse(brand.get({ plain: true }));
+    }
 }
