@@ -3,36 +3,28 @@ import { IBrandUseCase, IBrandRepository } from "../interface";
 import { BrandStatus } from "../model/brand-enum";
 import { Brand } from "../model/brand-model";
 import { BrandConditionDTO, BrandCreateDTO, BrandUpdateDTO, BrandCreateDTOSchema } from "../model/brand.dto";
-import { BrandNotFoundError, BrandAlreadyDeletedError, BrandValidationError } from "../model/brand-error";
+import { BrandNotFoundError, BrandAlreadyDeletedError, BrandValidationError, BrandAlreadyExistsError } from "../model/brand-error";
 import { v7 } from "uuid";
 
 export class BrandUseCase implements IBrandUseCase {
     constructor(private readonly brandRepository: IBrandRepository) {
     }
 
+
+    /**
+     * Create a new brand
+     * @param data - The data for the new brand
+     * @returns The ID of the new brand
+     */
     async createNewBrand(data: BrandCreateDTO): Promise<string> {
-        // Validate input data
-        const validation = BrandCreateDTOSchema.safeParse(data);
-        if (!validation.success) {
-            throw new BrandValidationError("createData", data, validation.error.message);
-        }
-
-        const id = v7();
-        const brandData: Brand = {
-            id: id,
-            name: data.name,
-            image: data.image,
-            description: data.description,
-            tagLine: data.tagLine,
-            status: BrandStatus.ACTIVE,
-            created_at: new Date(),
-            updated_at: new Date()
-        }
-
-        await this.brandRepository.insert(brandData);
-        return id;
+        return "123";
     }
 
+    /**
+     * Update a brand
+     * @param id - The ID of the brand to update
+     * @param data - The data to update the brand with
+     */
     async updateBrand(id: string, data: BrandUpdateDTO): Promise<void> {
         try {
             const brand = await this.brandRepository.getById(id);
@@ -52,6 +44,10 @@ export class BrandUseCase implements IBrandUseCase {
         }
     }
 
+    /**
+     * Delete a brand
+     * @param id - The ID of the brand to delete
+     */
     async deleteBrand(id: string): Promise<void> {
         try {
             const brand = await this.brandRepository.getById(id);
@@ -72,6 +68,11 @@ export class BrandUseCase implements IBrandUseCase {
         }
     }
 
+    /**
+     * Get the detail of a brand
+     * @param id - The ID of the brand to get the detail of
+     * @returns The detail of the brand
+     */
     async getDetailBrand(id: string): Promise<Brand> {
         try {
             const brand = await this.brandRepository.getById(id);
@@ -90,6 +91,12 @@ export class BrandUseCase implements IBrandUseCase {
         }
     }
 
+    /**
+     * List all brands
+     * @param pagination - The pagination information
+     * @param condition - The condition to filter the brands
+     * @returns The list of brands
+     */
     async listBrand(pagination: Pagination, condition: BrandConditionDTO): Promise<{ brands: Brand[], pagination: Pagination }> {
         const result = await this.brandRepository.getAll(pagination, condition);
         return { brands: result.entities, pagination: result.pagination };

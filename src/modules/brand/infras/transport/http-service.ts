@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
-import { IBrandUseCase } from "../../interface";
+import { CreateCommand, IBrandUseCase, ICreateNewBrandCommandHandler } from "../../interface";
 
 import { BrandCreateDTOSchema, BrandUpdateDTOSchema } from "../../model/brand.dto";
 import { PaginationSchema } from "../../../../share/model/paging";
 
 export class BrandHttpService {
-    constructor(private readonly useCase: IBrandUseCase) {
+    constructor(private readonly useCase: IBrandUseCase,
+        private readonly createNewBrandCommandHandler: ICreateNewBrandCommandHandler<CreateCommand, string>) {
 
     }
     async createAPI(req: Request, res: Response): Promise<void> {
@@ -15,7 +16,8 @@ export class BrandHttpService {
             res.status(400).json({ message: "Invalid request body", error: error.message });
             return;
         }
-        const id = await this.useCase.createNewBrand(data);
+        const cmd: CreateCommand = { cmd: data };
+        const id = await this.createNewBrandCommandHandler.execute(cmd);
         res.status(201).json({ message: "Brand created successfully", data: { id } });
 
 

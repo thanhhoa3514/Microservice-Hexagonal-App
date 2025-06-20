@@ -12,7 +12,14 @@ export interface IBrandUseCase {
     getDetailBrand(id: string): Promise<Brand>;
     listBrand(pagination: Pagination, condition: BrandConditionDTO): Promise<{ brands: Brand[], pagination: Pagination }>;
 }
-export interface IBrandRepository extends IRepository<Brand, BrandConditionDTO, BrandUpdateDTO> {
 
+export interface CreateCommand {
+    cmd: BrandCreateDTO;
+}
+export interface ICreateNewBrandCommandHandler<Command, Result> {
+    execute(data: CreateCommand): Promise<Result>;
+}
+export interface IBrandRepository extends IRepository<Brand, BrandConditionDTO, BrandUpdateDTO> {
+    findByCondition(condition: BrandConditionDTO): Promise<Brand | null>;
 }
 
