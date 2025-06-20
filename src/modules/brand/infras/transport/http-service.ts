@@ -9,17 +9,15 @@ export class BrandHttpService {
 
     }
     async createAPI(req: Request, res: Response): Promise<void> {
-        try {
-            const { success, data, error } = BrandCreateDTOSchema.safeParse(req.body);
-            if (!success) {
-                res.status(400).json({ message: "Invalid request body", error: error.message });
-                return;
-            }
-            const id = await this.useCase.createNewBrand(data);
-            res.status(201).json({ message: "Brand created successfully", data: { id } });
-        } catch (error) {
-            res.status(500).json({ message: "Internal server error", error: error });
+
+        const { success, data, error } = BrandCreateDTOSchema.safeParse(req.body);
+        if (!success) {
+            res.status(400).json({ message: "Invalid request body", error: error.message });
+            return;
         }
+        const id = await this.useCase.createNewBrand(data);
+        res.status(201).json({ message: "Brand created successfully", data: { id } });
+
 
     }
     async updateAPI(req: Request, res: Response): Promise<void> {
@@ -44,16 +42,14 @@ export class BrandHttpService {
         }
     }
     async getDetailAPI(req: Request, res: Response): Promise<void> {
-        try {
-            const brand = await this.useCase.getDetailBrand(req.params.id);
-            res.status(200).json({ message: "Brand retrieved successfully", data: brand });
-        } catch (error) {
-            res.status(500).json({ message: "Internal server error", error: error });
-        }
+        const brand = await this.useCase.getDetailBrand(req.params.id);
+        res.status(200).json({ message: "Brand retrieved successfully", data: brand });
+
     }
     async listAPI(req: Request, res: Response): Promise<void> {
         try {
             const { success, data, error } = PaginationSchema.safeParse(req.query);
+
             if (!success) {
                 res.status(400).json({ message: "Invalid request body", error: error.message });
                 return;
