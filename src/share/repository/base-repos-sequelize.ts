@@ -50,6 +50,14 @@ export class BaseRepositorySequelize<Entity, Condition, UpdateDTO> implements IR
             pagination: { page, limit, total }
         }
     }
+    async findByCondition(condition: Condition): Promise<Entity | null> {
+        const entity = await this.sequelize.models[this.modelName].findOne({ where: condition as any });
+        if (!entity) {
+            return null;
+        }
+        const persistenceData = entity.get({ plain: true });
+        return persistenceData as Entity;
+    }
     async update(id: string, data: UpdateDTO): Promise<void> {
         await this.sequelize.models[this.modelName].update(data as any, { where: { id } });
     }
