@@ -1,12 +1,19 @@
 import { Request, Response } from "express";
-import { CreateCommand, IBrandUseCase, ICreateNewBrandCommandHandler } from "../../interface";
+import { CreateCommand, DeleteCommand, GetDetailBrandQuery, IBrandUseCase, ListBrandQuery, UpdateCommand } from "../../interface";
 
 import { BrandCreateDTOSchema, BrandUpdateDTOSchema } from "../../model/brand.dto";
-import { PaginationSchema } from "../../../../share/model/paging";
+import { Pagination, PaginationSchema } from "../../../../share/model/paging";
+import { Brand } from "../../model/brand-model";
+import { ICreateNewBrandCommandHandler, IQueryHandler } from "../../../../share/interface";
 
 export class BrandHttpService {
     constructor(private readonly useCase: IBrandUseCase,
-        private readonly createNewBrandCommandHandler: ICreateNewBrandCommandHandler<CreateCommand, string>) {
+        private readonly createNewBrandCommandHandler: ICreateNewBrandCommandHandler<CreateCommand, string>,
+        private readonly getDetailBrandQueryHandler: IQueryHandler<GetDetailBrandQuery, Brand>,
+        private readonly updateBrandCommandHandler: ICreateNewBrandCommandHandler<UpdateCommand, void>,
+        private readonly deleteBrandCommandHandler: ICreateNewBrandCommandHandler<DeleteCommand, void>,
+        private readonly listBrandQueryHandler: IQueryHandler<ListBrandQuery, { brands: Brand[], pagination: Pagination }>
+    ) {
 
     }
     async createAPI(req: Request, res: Response): Promise<void> {
@@ -29,7 +36,8 @@ export class BrandHttpService {
                 res.status(400).json({ message: "Invalid request body", error: error.message });
                 return;
             }
-            await this.useCase.updateBrand(req.params.id, data);
+            const cmd: UpdateCommand = { id: req.params.id, cmd: data };
+            await this.updateBrandCommandHandler.execute(cmd);
             res.status(200).json({ message: "Brand updated successfully" });
         } catch (error) {
             res.status(500).json({ message: "Internal server error", error: error });
@@ -37,15 +45,22 @@ export class BrandHttpService {
     }
     async deleteAPI(req: Request, res: Response): Promise<void> {
         try {
-            await this.useCase.deleteBrand(req.params.id);
+            const cmd: DeleteCommand = { id: req.params.id };
+            await this.deleteBrandCommandHandler.execute(cmd);
             res.status(200).json({ message: "Brand deleted successfully" });
         } catch (error) {
             res.status(500).json({ message: "Internal server error", error: error });
         }
     }
     async getDetailAPI(req: Request, res: Response): Promise<void> {
-        const brand = await this.useCase.getDetailBrand(req.params.id);
-        res.status(200).json({ message: "Brand retrieved successfully", data: brand });
+        try {
+
+            const query: GetDetailBrandQuery = { id: req.params.id };
+            const brand = await this.getDetailBrandQueryHandler.execute(query);
+            res.status(200).json({ message: "Brand retrieved successfully", data: brand });
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error: error });
+        }
 
     }
     async listAPI(req: Request, res: Response): Promise<void> {
@@ -56,7 +71,8 @@ export class BrandHttpService {
                 res.status(400).json({ message: "Invalid request body", error: error.message });
                 return;
             }
-            const { brands, pagination } = await this.useCase.listBrand(data, req.query);
+            const query: ListBrandQuery = { pagination: data, condition: req.query };
+            const { brands, pagination } = await this.listBrandQueryHandler.execute(query);
             res.status(200).json({ message: "Brand retrieved successfully", data: { brands, pagination } });
         } catch (error) {
             res.status(500).json({ message: "Internal server error", error: error });

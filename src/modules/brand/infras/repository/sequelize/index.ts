@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import { BrandStatus } from "../../../model/brand-enum";
+import { BrandStatus } from "@modules/brand/model/brand-enum";
 
 export class BrandPersistence extends Model {
     declare id: string;
