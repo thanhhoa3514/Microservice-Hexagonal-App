@@ -1,15 +1,19 @@
-import { BaseRepositorySequelize } from "../../../../../share/repository/base-repos-sequelize";
-import { Sequelize } from "sequelize";
-import { Brand, BrandSchema, modelName } from "../../../model/brand-model";
-import { BrandConditionDTO, BrandUpdateDTO } from "../../../model/brand.dto";
-import { Pagination, PaginationSchema } from "../../../../../share/model/paging";
-import { BrandStatus } from "../../../model/brand-enum";
-import { BrandPersistence } from "./index";
-import { BaseError } from "../../../../../share/model/base-error";
+import { BaseRepositorySequelize } from "@share/repository/base-repos-sequelize";
+
+import { Brand, BrandSchema } from "@modules/brand/model/brand-model";
+import { BrandConditionDTO, BrandUpdateDTO } from "@modules/brand/model/brand.dto";
+import { Pagination } from "@share/model/paging";
+import { BrandStatus } from "@modules/brand/model/brand-enum";
+import { BrandPersistence } from "@modules/brand/infras/repository/sequelize/index";
+import { BaseError } from "@share/model/base-error";
+import { IBrandQueryRepository, IBrandCommandRepository } from "@modules/brand/interface";
 
 export class BrandRepositorySequelize extends BaseRepositorySequelize<Brand, BrandConditionDTO, BrandUpdateDTO> {
-    constructor(sequelize: Sequelize) {
-        super(sequelize, modelName);
+    constructor(
+        readonly commandRepository: IBrandCommandRepository,
+        readonly queryRepository: IBrandQueryRepository
+    ) {
+        super(queryRepository, commandRepository);
 
     }
     async getById(id: string): Promise<Brand> {
