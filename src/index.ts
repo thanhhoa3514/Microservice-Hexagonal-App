@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import dotenv from "dotenv";
-import { setUpCategoryAPIHex } from "./modules/category";
-import { setUpBrandAPIHex } from "./modules/brand";
-dotenv.config();
+import "module-alias/register";
+import { config } from "dotenv";
+import { setUpCategoryAPIHex } from "@modules/category";
+import { setUpBrandAPIHex } from "@modules/brand";
+config();
 const express = require("express");
-import { sequelize } from "./share/component/sequelize";
+import { sequelize } from "@share/component/sequelize";
 (async () => {
     await sequelize.authenticate();
     console.log("Database connected");
