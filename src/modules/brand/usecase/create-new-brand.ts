@@ -1,9 +1,10 @@
 import { v7 } from "uuid";
-import { CreateCommand, IBrandRepository, IBrandUseCase, ICreateNewBrandCommandHandler } from "../interface";
+import { CreateCommand, IBrandRepository } from "../interface";
 import { BrandAlreadyExistsError, BrandValidationError } from "../model/brand-error";
 import { BrandCreateDTOSchema } from "../model/brand.dto";
 import { Brand } from "../model/brand-model";
 import { BrandStatus } from "../model/brand-enum";
+import { ICreateNewBrandCommandHandler } from "../../../share/interface";
 
 export class CreateNewBrandCommandHandler implements ICreateNewBrandCommandHandler<CreateCommand, string> {
     constructor(private readonly brandRepository: IBrandRepository) {
