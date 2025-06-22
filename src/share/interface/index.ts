@@ -23,7 +23,7 @@ export interface ICommandHandler<Command, Result> {
     execute(data: Command): Promise<Result>;
 }
 export interface IUseCase<CreateDTO, UpdateDTO, Entity, Condition> {
-    create(data: CreateDTO): Promise<Entity>;
+    insert(data: CreateDTO): Promise<string>;
     execute(query: { pagination: Pagination, condition: Condition }): Promise<{ entities: Entity[], pagination: Pagination }>;
     getById(id: string): Promise<Entity>;
     update(id: string, data: UpdateDTO): Promise<Entity>;

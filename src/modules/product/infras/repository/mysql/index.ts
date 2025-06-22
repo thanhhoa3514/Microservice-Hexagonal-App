@@ -7,7 +7,7 @@ export class ProductPersistence extends Model {
 }
 export class CategoryPersistence extends Model { }
 export class BrandPersistence extends Model { }
-export const modelName: string = "Product";
+export const modelName: string = "products";
 export function init(sequelize: Sequelize) {
     ProductPersistence.init(
         {
@@ -26,6 +26,10 @@ export function init(sequelize: Sequelize) {
             },
             colors: {
                 type: DataTypes.STRING,
+                allowNull: true,
+            },
+            quantity: {
+                type: DataTypes.INTEGER,
                 allowNull: true,
             },
             price: {
@@ -81,6 +85,54 @@ export function init(sequelize: Sequelize) {
         underscored: true,
         updatedAt: "updated_at",
         createdAt: "created_at",
-    });
-    return ProductPersistence;
+    }
+    );
+    // CategoryPersistence.init(
+    //     {
+    //         id: {
+    //             type: DataTypes.UUID,
+    //             primaryKey: true,
+    //         },
+    //         name: {
+    //             type: DataTypes.STRING,
+    //             allowNull: false,
+    //         },
+    //     },
+    //     {
+    //         sequelize,
+    //         modelName: "ProductCategory",
+    //         tableName: "categories",
+    //         createdAt: false,
+    //         updatedAt: false,
+    //     }
+    // );
+    // BrandPersistence.init(
+    //     {
+    //         id: {
+    //             type: DataTypes.UUID,
+    //             primaryKey: true,
+    //         },
+    //         name: {
+    //             type: DataTypes.STRING,
+    //             allowNull: false,
+    //         },
+    //     },
+    //     {
+    //         sequelize,
+    //         modelName: "ProductBrand",
+    //         tableName: "brands",
+    //         createdAt: false,
+    //         updatedAt: false,
+    //     }
+    // );
+
+    // ProductPersistence.belongsTo(CategoryPersistence, { foreignKey: { field: "category_id" }, as: "category" });
+    // ProductPersistence.belongsTo(BrandPersistence, { foreignKey: { field: "brand_id" }, as: "brand" });
+
+    // CategoryPersistence.hasMany(ProductPersistence, { foreignKey: { field: "category_id"}, as: "products" });
+    // BrandPersistence.hasMany(ProductPersistence, { foreignKey: { field: "brand_id"}, as: "products" });
+
+    return {
+        ProductPersistence,
+    }
 }

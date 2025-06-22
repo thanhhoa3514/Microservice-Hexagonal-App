@@ -3,14 +3,15 @@ import { Pagination, PaginationSchema } from "@share/model/paging";
 import { IUseCase } from "@share/interface";
 
 export abstract class BaseHttpService<Entity, CreateDTO, UpdateDTO, Condition> {
-    constructor(private readonly useCase: IUseCase<CreateDTO, UpdateDTO, Entity, Condition>) {
+    constructor(protected readonly useCase: IUseCase<CreateDTO, UpdateDTO, Entity, Condition>) {
 
     }
-    async create(req: Request<any, any, CreateDTO>, res: Response) {
+    async insert(req: Request<any, any, CreateDTO>, res: Response) {
         try {
             const result = await this.useCase.insert(req.body);
-            res.status(201).json(result);
+            res.status(201).json({ data: { id: result } });
         } catch (error) {
+            console.log(error);
             res.status(500).json({ message: (error as Error).message });
         }
     }
@@ -22,10 +23,18 @@ export abstract class BaseHttpService<Entity, CreateDTO, UpdateDTO, Condition> {
                 res.status(400).json({ message: "Invalid request body", error: error.message });
                 return;
             }
-            const query: { pagination: Pagination, condition: Condition } = { pagination: data, condition: req.query as Condition };
+
+            // Separate pagination params from condition params
+            const { page, limit, total, ...conditionParams } = req.query;
+            const query: { pagination: Pagination, condition: Condition } = {
+                pagination: data,
+                condition: conditionParams as Condition
+            };
+
             const { entities, pagination } = await this.useCase.execute(query);
-            res.status(200).json({ message: "Brand retrieved successfully", data: { entities, pagination } });
+            res.status(200).json({ message: "Data retrieved successfully", data: { entities, pagination } });
         } catch (error) {
+            console.log(error);
             res.status(500).json({ message: "Internal server error", error: error });
         }
     }
