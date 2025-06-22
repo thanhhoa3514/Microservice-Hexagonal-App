@@ -53,5 +53,4 @@ export const ProductResponseDTOSchema = z.object({
     createdAt: z.date(),
     updatedAt: z.date()
 });
-
-export type ProductResponseDTO = z.infer<typeof ProductResponseDTOSchema>; 
+export type ProductResponseDTO = z.infer<typeof ProductResponseDTOSchema>;
