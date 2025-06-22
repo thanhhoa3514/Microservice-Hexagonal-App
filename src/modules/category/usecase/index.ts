@@ -57,4 +57,7 @@ export class CategoryUseCase implements ICategoryUseCase {
         await this.repository.update(id, data);
         return;
     }
+    async findAll(ids: string[]): Promise<Category[]> {
+        return this.repository.findAll(ids);
+    }
 }

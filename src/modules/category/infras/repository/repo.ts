@@ -1,5 +1,5 @@
 
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 import { BaseError } from "../../../../share/model/base-error";
 import { Pagination, PaginationSchema } from "../../../../share/model/paging";
 import { IRepository } from "../../interface";
@@ -86,5 +86,9 @@ export class CategoryRepository implements IRepository {
         delete insertData.parent_id;
 
         await this.sequelize.models[this.modelName].create(insertData);
+    }
+    async findAll(ids: string[]): Promise<Category[]> {
+        const categories = await CategoryPersistence.findAll({ where: { id: { [Op.in]: ids } } });
+        return categories.map(category => CategorySchema.parse(category.get({ plain: true })));
     }
 }

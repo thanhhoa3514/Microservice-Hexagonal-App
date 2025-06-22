@@ -8,6 +8,7 @@ export interface ICategoryUseCase {
     deleteCategory(id: string): Promise<void>;
     getDetailCategory(id: string): Promise<Category>;
     listCategory(pagination: Pagination, condition: CategoryConditionDTO): Promise<{ categories: Category[], pagination: Pagination }>;
+    findAll(ids: string[]): Promise<Category[]>;
 }
 
 export interface IRepository extends IQueryRepository, ICommandRepository {
@@ -22,4 +23,5 @@ export interface ICommandRepository {
     update(id: string, data: CategoryUpdateDTO): Promise<void>;
     delete(id: string): Promise<void>;
     insert(data: Category): Promise<void>;
+    findAll(ids: string[]): Promise<Category[]>;
 }
