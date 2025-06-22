@@ -7,6 +7,7 @@ import { BrandStatus } from "@modules/brand/model/brand-enum";
 import { BrandPersistence } from "@modules/brand/infras/repository/sequelize/index";
 import { BaseError } from "@share/model/base-error";
 import { IBrandQueryRepository, IBrandCommandRepository } from "@modules/brand/interface";
+import { Op } from "sequelize";
 
 export class BrandRepositorySequelize extends BaseRepositorySequelize<Brand, BrandConditionDTO, BrandUpdateDTO> {
     constructor(
@@ -77,5 +78,9 @@ export class BrandRepositorySequelize extends BaseRepositorySequelize<Brand, Bra
             return null;
         }
         return BrandSchema.parse(brand.get({ plain: true }));
+    }
+    async findAll(ids: string[]): Promise<Brand[]> {
+        const brands = await BrandPersistence.findAll({ where: { id: { [Op.in]: ids } } });
+        return brands.map(brand => BrandSchema.parse(brand.get({ plain: true })));
     }
 }

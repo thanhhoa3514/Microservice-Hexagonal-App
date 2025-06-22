@@ -4,7 +4,7 @@ import { BrandConditionDTO } from "@modules/brand/model/brand.dto";
 import { Pagination } from "@share/model/paging";
 import { IBrandQueryRepository } from "@modules/brand/interface";
 import { BrandPersistence } from "./index";
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
 export class BrandQueryRepositorySequelize extends BaseQueryRepositorySequelize<Brand, BrandConditionDTO> implements IBrandQueryRepository {
     constructor(sequelize: Sequelize) {
@@ -23,5 +23,9 @@ export class BrandQueryRepositorySequelize extends BaseQueryRepositorySequelize<
     async getAll(pagination: Pagination, condition: BrandConditionDTO): Promise<{ entities: Brand[]; pagination: Pagination; }> {
         // Use base implementation with custom logic if needed
         return super.getAll(pagination, condition);
+    }
+    async findAll(ids: string[]): Promise<Brand[]> {
+        const brands = await BrandPersistence.findAll({ where: { id: { [Op.in]: ids } } });
+        return brands.map(brand => BrandSchema.parse(brand.get({ plain: true })));
     }
 } 
