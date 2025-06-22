@@ -46,5 +46,8 @@ export const setUpBrandAPIHex = async (sequelize: Sequelize) => {
     router.patch("/brands/:id", brandHttpService.updateAPI.bind(brandHttpService));
     router.delete("/brands/:id", brandHttpService.deleteAPI.bind(brandHttpService));
 
+    router.post("/brands/rpc/find-all",
+        brandHttpService.findAllAPI.bind(brandHttpService)
+    );
     return router;
 }

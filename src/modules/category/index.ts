@@ -19,5 +19,12 @@ export const setUpCategoryAPIHex = async (sequelize: Sequelize) => {
     router.patch("/categories/:id", categoryHttpService.updateCategoryAPI.bind(categoryHttpService));
     router.delete("/categories/:id", categoryHttpService.deleteCategoryAPI.bind(categoryHttpService));
 
+    router.post("/categories/rpc/find-all",
+        async (req, res) => {
+            const { ids } = req.body;
+            const data = await categoryUseCase.findAll(ids as string[]);
+            res.status(200).json(data);
+        }
+    );
     return router;
 }
