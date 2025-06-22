@@ -2,9 +2,9 @@ import { Request, Response } from "express";
 import { CreateCommand, DeleteCommand, GetDetailBrandQuery, IBrandUseCase, ListBrandQuery, UpdateCommand } from "../../interface";
 
 import { BrandCreateDTOSchema, BrandUpdateDTOSchema } from "../../model/brand.dto";
-import { Pagination, PaginationSchema } from "../../../../share/model/paging";
+import { Pagination, PaginationSchema } from "@share/model/paging";
 import { Brand } from "../../model/brand-model";
-import { ICreateNewBrandCommandHandler, IQueryHandler } from "../../../../share/interface";
+import { ICreateNewBrandCommandHandler, IQueryHandler } from "@share/interface";
 
 export class BrandHttpService {
     constructor(private readonly useCase: IBrandUseCase,
@@ -74,6 +74,19 @@ export class BrandHttpService {
             const query: ListBrandQuery = { pagination: data, condition: req.query };
             const { brands, pagination } = await this.listBrandQueryHandler.execute(query);
             res.status(200).json({ message: "Brand retrieved successfully", data: { brands, pagination } });
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error: error });
+        }
+    }
+    async findAllAPI(req: Request, res: Response): Promise<void> {
+        try {
+            const { ids } = req.body;
+            const data = await this.useCase.findAll(ids as string[]);
+            if (data.length === 0) {
+                res.status(404).json({ message: "Brand not found" });
+                return;
+            }
+            res.status(200).json(data);
         } catch (error) {
             res.status(500).json({ message: "Internal server error", error: error });
         }

@@ -12,6 +12,7 @@ export interface IBrandUseCase {
     deleteBrand(id: string): Promise<void>;
     getDetailBrand(id: string): Promise<Brand>;
     listBrand(pagination: Pagination, condition: BrandConditionDTO): Promise<{ brands: Brand[], pagination: Pagination }>;
+    findAll(ids: string[]): Promise<Brand[]>;
 }
 
 export interface CreateCommand {
@@ -36,6 +37,8 @@ export interface ListBrandQuery {
 
 export interface IBrandRepository extends IRepository<Brand, BrandConditionDTO, BrandUpdateDTO> {
     findByCondition(condition: BrandConditionDTO): Promise<Brand | null>;
+    findAll(ids: string[]): Promise<Brand[]>;
+
 }
 export interface IBrandQueryRepository extends BaseQueryRepositorySequelize<Brand, BrandConditionDTO> {
     // Inherits all base methods: getById, getAll, findByCondition, count

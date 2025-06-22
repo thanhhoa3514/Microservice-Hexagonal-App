@@ -1,16 +1,15 @@
-import { Pagination } from "../../../share/model/paging";
+import { Pagination } from "@share/model/paging";
 import { IBrandUseCase, IBrandRepository } from "../interface";
 import { BrandStatus } from "../model/brand-enum";
 import { Brand } from "../model/brand-model";
-import { BrandConditionDTO, BrandCreateDTO, BrandUpdateDTO, BrandCreateDTOSchema } from "../model/brand.dto";
-import { BrandNotFoundError, BrandAlreadyDeletedError, BrandValidationError, BrandAlreadyExistsError } from "../model/brand-error";
-import { v7 } from "uuid";
-
+import { BrandConditionDTO, BrandCreateDTO, BrandUpdateDTO } from "../model/brand.dto";
+import { BrandNotFoundError, BrandAlreadyDeletedError } from "../model/brand-error";
 export class BrandUseCase implements IBrandUseCase {
     constructor(private readonly brandRepository: IBrandRepository) {
     }
-
-
+    findAll(ids: string[]): Promise<Brand[]> {
+        return this.brandRepository.findAll(ids);
+    }
     /**
      * Create a new brand
      * @param data - The data for the new brand
@@ -101,4 +100,5 @@ export class BrandUseCase implements IBrandUseCase {
         const result = await this.brandRepository.getAll(pagination, condition);
         return { brands: result.entities, pagination: result.pagination };
     }
+
 }
