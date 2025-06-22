@@ -22,4 +22,22 @@ export const ProductSchema = z.object({
     updatedAt: z.date().optional()
 });
 
-export type Product = z.infer<typeof ProductSchema>;
+export type Product = z.infer<typeof ProductSchema> & { category?: ProductCategoryDTO, brand?: ProductBrandDTO };
+
+
+
+
+export const ProductBrandDTOSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+});
+
+export type ProductBrandDTO = z.infer<typeof ProductBrandDTOSchema>;
+
+
+export const ProductCategoryDTOSchema = z.object({
+    id: z.string().uuid(),
+    name: z.string().min(2, { message: "Name must be at least 2 characters" }),
+});
+
+export type ProductCategoryDTO = z.infer<typeof ProductCategoryDTOSchema>;
