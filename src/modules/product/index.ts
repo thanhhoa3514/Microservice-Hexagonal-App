@@ -6,6 +6,8 @@ import { ProductRepositorySequelize } from "./infras/repository/mysql/product-re
 import { ProductUseCase } from "./usecase/index";
 import { ProductHttpService } from "./infras/transport/http-service";
 import { modelName } from "./model/product-model";
+import { RPCProductBrandRepository, RPCProductCategoryRepository } from "./infras/repository/rpc";
+import { config } from "@share/component/config";
 
 const router = Router();
 
@@ -18,10 +20,12 @@ export const setUpProductAPIHex = async (sequelize: Sequelize) => {
     // Create use case
     const productUseCase = new ProductUseCase(productRepository);
 
+    const rpcProductBrandRepository = new RPCProductBrandRepository(config.rpc.product.baseURL!);
+    const rpcProductCategoryRepository = new RPCProductCategoryRepository(config.rpc.category.baseURL!);
     // Create HTTP service
-    const productHttpService = new ProductHttpService(productUseCase);
+    const productHttpService = new ProductHttpService(productUseCase, rpcProductBrandRepository, rpcProductCategoryRepository);
 
-    router.post("/products", productHttpService.create.bind(productHttpService));
+    router.post("/products", productHttpService.insert.bind(productHttpService));
     router.get("/products", productHttpService.findAll.bind(productHttpService));
     router.get("/products/:id", productHttpService.getById.bind(productHttpService));
     router.patch("/products/:id", productHttpService.update.bind(productHttpService));
