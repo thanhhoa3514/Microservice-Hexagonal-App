@@ -1,5 +1,6 @@
-import { Role } from "@/modules/user/model/user.enum";
+
 import { Pagination } from "../model/paging";
+import { UserRole } from "../model/mode-status";
 
 export interface IRepository<Entity, Condition, UpdateDTO> extends IQueryRepository<Entity, Condition>, ICommandRepository<Entity, UpdateDTO> {
 
@@ -33,7 +34,7 @@ export interface IUseCase<CreateDTO, UpdateDTO, Entity, Condition> {
 
 export interface TokenPayLoad {
     sub: string;
-    role: Role
+    role: UserRole
 }
 export interface Requester extends TokenPayLoad {
 
@@ -46,3 +47,16 @@ export type UserToken = {
     accessToken: string;
     refreshToken: string;
 }
+
+
+export type TokenIntrospectResult = {
+    payload: TokenPayLoad;
+    error?: string;
+    isOk: boolean;
+}
+
+export type ITokenIntrospect = {
+    introspect(token: string): Promise<TokenIntrospectResult>;
+}
+
+
