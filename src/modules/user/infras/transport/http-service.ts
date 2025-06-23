@@ -6,6 +6,7 @@ import { Request, Response } from "express";
 import { JWTTokenServiceFactory } from "@share/component/jwt";
 import { UserProfileDTO, UserProfileDTOSchema } from "../../model/user.dto";
 import { json } from "sequelize";
+import { responseError } from "@share/app-error";
 
 export class UserHttpService extends BaseHttpService<UserDTO, UserRegistrationDTO, UserUpdateDTO, UserConditionDTO> {
     constructor(readonly userUseCase: IUserUseCase) {
@@ -20,10 +21,13 @@ export class UserHttpService extends BaseHttpService<UserDTO, UserRegistrationDT
             const result = await this.userUseCase.login(dto);
             res.status(200).json({
                 message: "Login successful",
-                data: result
+                data: {
+                    accessToken: result.accessToken,
+                    refreshToken: result.refreshToken
+                }
             });
         } catch (error) {
-            res.status(400).json({ message: (error as Error).message });
+            responseError(res, error as Error);
         }
     }
     async profile(req: Request, res: Response): Promise<void> {
@@ -79,5 +83,20 @@ export class UserHttpService extends BaseHttpService<UserDTO, UserRegistrationDT
             console.error('Transform error:', error);
             throw new Error("Invalid data transformation");
         }
+    }
+    async introspect(req: Request, res: Response): Promise<void> {
+        try {
+            const token = req.body.token
+            const result = await this.userUseCase.verify(token);
+            res.status(200).json({
+                message: "Verify successfully",
+                data: result
+            });
+        } catch (error) {
+            responseError(res, error as Error);
+        }
+    }
+    async updateProfile(req: Request, res: Response): Promise<void> {
+        return await this.update(req, res);
     }
 }

@@ -1,5 +1,6 @@
 import { z } from "zod";
-import { Gender, Role, Status } from "./user.enum";
+import { Gender } from "./user.enum";
+import { UserRole, UserStatus } from "@share/model/mode-status";
 
 export const userModelName: string = "users";
 export const UserDTOSchema = z.object({
@@ -13,8 +14,8 @@ export const UserDTOSchema = z.object({
     phone: z.string().nullable().optional(),
     address: z.string().nullable().optional(),
     birthday: z.date().nullable().optional(),
-    role: z.nativeEnum(Role),
-    status: z.nativeEnum(Status),
+    role: z.nativeEnum(UserRole),
+    status: z.nativeEnum(UserStatus),
     gender: z.nativeEnum(Gender),
     createdAt: z.date(),
     updatedAt: z.date(),
@@ -48,7 +49,7 @@ const UserUpdateDTOSchema = z.object({
     address: z.string().nullable().optional(),
     birthday: z.date().nullable().optional(),
 
-    status: z.nativeEnum(Status).optional(),
+    status: z.nativeEnum(UserStatus).optional(),
     gender: z.nativeEnum(Gender).optional(),
 
 });
@@ -63,7 +64,7 @@ export const UserConditionDTOSchema = z.object({
     phone: z.string().nullable().optional(),
     address: z.string().nullable().optional(),
     gender: z.nativeEnum(Gender).optional(),
-    role: z.nativeEnum(Role).optional(),
-    status: z.nativeEnum(Status).optional()
+    role: z.nativeEnum(UserRole).optional(),
+    status: z.nativeEnum(UserStatus).optional()
 });
 export type UserConditionDTO = z.infer<typeof UserConditionDTOSchema>;

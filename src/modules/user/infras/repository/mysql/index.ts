@@ -1,10 +1,10 @@
-import { Status } from "@modules/user/model/user.enum";
+
 import { DataTypes, Model, Sequelize } from "sequelize";
 
 
 export class UserPersistence extends Model {
     declare id: string;
-    declare status: Status;
+
 }
 
 export const modelName: string = "users";
