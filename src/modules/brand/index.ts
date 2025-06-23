@@ -12,10 +12,12 @@ import { GetBrandDetailQueryHandler } from "./usecase/get-brand-detail";
 import { UpdateBrandCommandHandler } from "./usecase/update-brand";
 import { DeleteBrandCommandHandler } from "./usecase/delete-brand";
 import { ListBrandQueryHandler } from "./usecase/list-brand";
+import { ServiceContext } from "@share/interface/service-context";
+import { UserRole } from "@share/model/mode-status";
 
 const router = Router();
 
-export const setUpBrandAPIHex = async (sequelize: Sequelize) => {
+export const setUpBrandAPIHex = async (sequelize: Sequelize, serviceContext: ServiceContext) => {
     init(sequelize);
 
     // Create concrete repositories
@@ -40,13 +42,13 @@ export const setUpBrandAPIHex = async (sequelize: Sequelize) => {
     );
 
 
-    router.post("/brands", brandHttpService.createAPI.bind(brandHttpService));
-    router.get("/brands", brandHttpService.listAPI.bind(brandHttpService));
-    router.get("/brands/:id", brandHttpService.getDetailAPI.bind(brandHttpService));
-    router.patch("/brands/:id", brandHttpService.updateAPI.bind(brandHttpService));
-    router.delete("/brands/:id", brandHttpService.deleteAPI.bind(brandHttpService));
+    router.post("/brands", serviceContext.mdlFactory.authMiddleware, serviceContext.mdlFactory.checkRole([UserRole.ADMIN]), brandHttpService.createAPI.bind(brandHttpService));
+    router.get("/brands", serviceContext.mdlFactory.authMiddleware, brandHttpService.listAPI.bind(brandHttpService));
+    router.get("/brands/:id", serviceContext.mdlFactory.authMiddleware, brandHttpService.getDetailAPI.bind(brandHttpService));
+    router.patch("/brands/:id", serviceContext.mdlFactory.authMiddleware, serviceContext.mdlFactory.checkRole([UserRole.ADMIN]), brandHttpService.updateAPI.bind(brandHttpService));
+    router.delete("/brands/:id", serviceContext.mdlFactory.authMiddleware, serviceContext.mdlFactory.checkRole([UserRole.ADMIN]), brandHttpService.deleteAPI.bind(brandHttpService));
 
-    router.post("/brands/rpc/find-all",
+    router.post("/brands/rpc/find-all", serviceContext.mdlFactory.authMiddleware,
         brandHttpService.findAllAPI.bind(brandHttpService)
     );
     return router;
