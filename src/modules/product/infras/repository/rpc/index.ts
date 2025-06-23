@@ -38,3 +38,23 @@ export class RPCProductCategoryRepository implements IProductCategoryQueryReposi
         return [];
     }
 }
+
+// proxy design pattern, if we want to add redis cache, simply add cache to the constructor like redis client
+export class ProxyProductBrandRepository implements IBrandQueryRepository {
+    constructor(private readonly origin: IBrandQueryRepository) { }
+    private cache: Record<string, ProductBrandDTO> = {};
+    async get(id: string): Promise<ProductBrandDTO | null> {
+        if (this.cache[id]) {
+            return this.cache[id];
+        }
+        const data = await this.origin.get(id);
+        if (data) {
+            this.cache[id] = data;
+        }
+        return data;
+    }
+    async findAll(): Promise<ProductBrandDTO[]> {
+        return this.origin.findAll();
+    }
+
+}
