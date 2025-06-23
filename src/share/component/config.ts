@@ -11,6 +11,7 @@ export const config = {
     },
     jwt: {
         secretKey: process.env.JWT_SECRET_KEY as string,
-        expiresIn: process.env.JWT_EXPIRES_IN as string
+        expiresIn: process.env.JWT_EXPIRES_IN as string,
+        refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN as string
     }
 }

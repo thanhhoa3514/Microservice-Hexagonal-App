@@ -1,4 +1,4 @@
-import { IRepository } from "@share/interface";
+import { IRepository, UserToken } from "@share/interface";
 import { IUserUseCase } from "../interface";
 import { UserConditionDTO, UserDTO, UserLoginDTO, UserLoginDTOSchema, UserRegistrationDTO, UserRegistrationDTOSchema, UserUpdateDTO } from "../model/user.model";
 import { Pagination } from "@share/model/paging";
@@ -66,7 +66,7 @@ export class UserUseCase implements IUserUseCase {
         return this.userRepository.getById(id);
     }
 
-    async login(data: UserLoginDTO): Promise<string> {
+    async login(data: UserLoginDTO): Promise<UserToken> {
         const dto = UserLoginDTOSchema.parse(data);
         const user: UserDTO | null = await this.userRepository.findByCondition({ email: dto.email });
         if (!user) {
@@ -79,7 +79,8 @@ export class UserUseCase implements IUserUseCase {
         if (user.status !== Status.ACTIVE) {
             throw new UserNotActiveError();
         }
-        const token = await JWTTokenServiceFactory.generateToken({ sub: user.id, role: user.role });
-        return token;
+        const accessToken = await JWTTokenServiceFactory.generateToken({ sub: user.id, role: user.role });
+        const refreshToken = await JWTTokenServiceFactory.generateRefreshToken({ sub: user.id, role: user.role });
+        return { accessToken, refreshToken };
     }
 }

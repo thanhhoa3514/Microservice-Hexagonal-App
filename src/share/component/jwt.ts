@@ -5,9 +5,11 @@ import { config } from "./config";
 export class JWTTokenService implements ITokenProvider {
     private readonly secretKey: string;
     private readonly expiresIn: string;
-    constructor(secretKey: string, expiresIn: string) {
+    private readonly refreshExpiresIn: string;
+    constructor(secretKey: string, expiresIn: string, refreshExpiresIn: string) {
         this.secretKey = secretKey;
         this.expiresIn = expiresIn;
+        this.refreshExpiresIn = refreshExpiresIn;
     }
     async generateToken(payload: TokenPayLoad): Promise<string> {
         return jwt.sign(payload, this.secretKey, {
@@ -24,5 +26,10 @@ export class JWTTokenService implements ITokenProvider {
             return null;
         }
     }
+    async generateRefreshToken(payload: TokenPayLoad): Promise<string> {
+        return jwt.sign(payload, this.secretKey, {
+            expiresIn: this.refreshExpiresIn as any
+        });
+    }
 }
-export const JWTTokenServiceFactory = new JWTTokenService(config.jwt.secretKey as string, config.jwt.expiresIn as string);
+export const JWTTokenServiceFactory = new JWTTokenService(config.jwt.secretKey as string, config.jwt.expiresIn as string, config.jwt.refreshExpiresIn as string);
