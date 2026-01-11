@@ -15,6 +15,9 @@ export abstract class BaseRepositorySequelize<Entity, Condition, UpdateDTO> impl
     async getAll(pagination: Pagination, condition: Condition): Promise<{ entities: Entity[]; pagination: Pagination; }> {
         return await this.queryRepository.getAll(pagination, condition);
     }
+    async getByIds(ids: string[]): Promise<Entity[]> {
+        return await this.queryRepository.getByIds(ids);
+    }
     async count(condition: Condition): Promise<number> {
         return await this.queryRepository.count(condition);
     }
@@ -40,6 +43,10 @@ export abstract class BaseQueryRepositorySequelize<Entity, Condition> implements
             throw new Error(`${this.modelName} not found`);
         }
         return entity.get({ plain: true }) as Entity;
+    }
+    async getByIds(ids: string[]): Promise<Entity[]> {
+        const entities = await this.sequelize.models[this.modelName].findAll({ where: { id: { [Op.in]: ids } } });
+        return entities.map(entity => entity.get({ plain: true })) as Entity[];
     }
     async findByCondition(condition: Condition): Promise<Entity | null> {
         const entity = await this.sequelize.models[this.modelName].findOne({ where: condition as any });

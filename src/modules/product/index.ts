@@ -23,7 +23,7 @@ export const setUpProductAPIHex = async (sequelize: Sequelize, serviceContext: S
 
     const rpcProductBrandRepository = new ProxyProductBrandRepository(new RPCProductBrandRepository(config.rpc.product.baseURL!));
     const rpcProductCategoryRepository = new RPCProductCategoryRepository(config.rpc.category.baseURL!);
-    const productUseCase = new ProductUseCase(productRepository, rpcProductBrandRepository, rpcProductCategoryRepository);
+    const productUseCase = new ProductUseCase(productRepository, rpcProductBrandRepository, rpcProductCategoryRepository, productRepository.queryRepository);
     // Create HTTP service
     const productHttpService = new ProductHttpService(productUseCase, rpcProductBrandRepository, rpcProductCategoryRepository);
 
@@ -33,5 +33,7 @@ export const setUpProductAPIHex = async (sequelize: Sequelize, serviceContext: S
     router.patch("/products/:id", serviceContext.mdlFactory.authMiddleware, serviceContext.mdlFactory.checkRole([UserRole.ADMIN]), productHttpService.update.bind(productHttpService));
     router.delete("/products/:id", serviceContext.mdlFactory.authMiddleware, serviceContext.mdlFactory.checkRole([UserRole.ADMIN]), productHttpService.delete.bind(productHttpService));
 
+    // rpc
+    router.post("/products/ids", serviceContext.mdlFactory.authMiddleware, productHttpService.getByIds.bind(productHttpService));
     return router;
 }

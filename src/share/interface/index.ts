@@ -8,6 +8,7 @@ export interface IRepository<Entity, Condition, UpdateDTO> extends IQueryReposit
 export interface IQueryRepository<Entity, Condition> {
     getById(id: string): Promise<Entity>;
     getAll(pagination: Pagination, condition: Condition): Promise<{ entities: Entity[], pagination: Pagination }>;
+    getByIds(ids: string[]): Promise<Entity[]>;
 }
 
 export interface ICommandRepository<Entity, UpdateDTO> {

@@ -31,6 +31,7 @@ export const SetUpUserHexModule = (sequelize: Sequelize, serviceContext: Service
 
     // RPC API(use for other microservices)
     route.post('/users/auth/introspect', userHttpService.introspect.bind(userHttpService));
+    // route.post('/users/cart', serviceContext.mdlFactory.authMiddleware, userHttpService.getCart.bind(userHttpService));
     // route.post('/users/auth/refresh-token', userHttpService.refreshToken.bind(userHttpService));
     return route;
 }

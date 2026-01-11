@@ -14,7 +14,9 @@ import { sequelize } from "@share/component/sequelize";
 import { setUpMiddleware } from "@share/middleware";
 import { checkRole } from "./share/middleware/checkrole";
 import { UserRole } from "./share/model/mode-status";
-import { responseError } from "./share/app-error";
+
+import { setUpCartAPIHex } from "@modules/cart";
+import { setupOrderModuleHex } from "@modules/order";
 (async () => {
     await sequelize.authenticate();
     console.log("Database connected");
@@ -36,7 +38,8 @@ import { responseError } from "./share/app-error";
     app.use('/v1', await setUpBrandAPIHex(sequelize, serviceContext));
     app.use('/v1', await setUpProductAPIHex(sequelize, serviceContext));
     app.use('/v1', await SetUpUserHexModule(sequelize, serviceContext));
-
+    app.use('/v1', await setUpCartAPIHex(sequelize, serviceContext));
+    app.use('/v1', await setupOrderModuleHex(sequelize, serviceContext));
 
     // error handling middleware v5
     // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

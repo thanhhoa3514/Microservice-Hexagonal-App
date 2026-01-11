@@ -50,7 +50,7 @@ export class UserHttpService extends BaseHttpService<UserDTO, UserRegistrationDT
                 return;
             }
             const transformedData = this.transformData(result);
-            console.log(transformedData);
+
             if (!transformedData) {
                 res.status(400).json({ message: "Invalid data" });
                 return;

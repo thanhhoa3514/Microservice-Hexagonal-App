@@ -1,5 +1,6 @@
 import { Handler, NextFunction, Request, Response } from "express";
 import { ITokenIntrospect, Requester } from "../interface";
+import { ErrUnauthorized, responseError } from "../app-error";
 
 
 export function authMiddleware(
@@ -11,13 +12,13 @@ export function authMiddleware(
             // get token from header
             const token = req.headers.authorization?.split(" ")[1];
             if (!token) {
-                res.status(401).json({ message: "Unauthorized" });
+                responseError(res, ErrUnauthorized);
                 return;
             }
             // verify token
             const { payload, error, isOk } = await introspect.introspect(token);
             if (!isOk) {
-                res.status(401).json({ message: error });
+                responseError(res, ErrUnauthorized);
                 return;
             }
             // get user from database

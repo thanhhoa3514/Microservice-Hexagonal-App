@@ -7,6 +7,12 @@ export const config = {
         },
         category: {
             baseURL: process.env.CATEGORY_RPC_BASE_URL,
+        },
+        cart: {
+            baseURL: process.env.CART_RPC_BASE_URL,
+        },
+        order: {
+            baseURL: process.env.ORDER_RPC_BASE_URL,
         }
     },
     jwt: {

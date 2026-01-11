@@ -4,7 +4,7 @@ import { Product, ProductBrandDTO, ProductCategoryDTO } from "../model/product-m
 import { IRepository, IUseCase } from "../../../share/interface";
 
 export interface IProductUseCase extends IUseCase<ProductCreateDTO, ProductUpdateDTO, Product, ProductConditionDTO> {
-
+    getByIds(ids: string[]): Promise<Product[]>;
 }
 
 export interface CreateCommand {

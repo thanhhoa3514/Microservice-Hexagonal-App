@@ -6,12 +6,14 @@ import { Product } from "../model/product-model";
 import { ProductStatus } from "../model/product-enum";
 import { v7 } from "uuid";
 import { ProductBrandNotExistsError, ProductCategoryNotExistsError } from "../model/product-error";
+import { IQueryRepository } from "@share/interface";
 
 export class ProductUseCase implements IProductUseCase {
     constructor(
         readonly repository: ProductRepositorySequelize,
         readonly rpcProductBrandRepository: IBrandQueryRepository,
-        readonly rpcProductCategoryRepository: IProductCategoryQueryRepository
+        readonly rpcProductCategoryRepository: IProductCategoryQueryRepository,
+        readonly productQueryRepository: IQueryRepository<Product, ProductConditionDTO>
     ) {
     }
 
@@ -70,5 +72,9 @@ export class ProductUseCase implements IProductUseCase {
     }
     async getById(id: string): Promise<Product> {
         return await this.repository.getById(id);
+    }
+    async getByIds(ids: string[]): Promise<Product[]> {
+        const products = await this.productQueryRepository.getByIds(ids);
+        return products;
     }
 }
